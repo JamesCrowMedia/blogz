@@ -2,7 +2,25 @@ import webapp2, jinja2, os, re
 from google.appengine.ext import db
 from models import Post, User
 import hashutils
+"""
+-----TO DO-----
+[ ] Add Login Form
+[x]     Create template
+[x]     Link to register
+[ ]     Include errors
+[x]     Add login/logout links
+[x] Author field
+[x]     use db.ReferenceProperty
+[x]     delete posts with no author
+[x] Make get_posts_by_user
+[x]     get_posts(self, limit, offset) - All users
+[x]     ordered by time created desc
+[x] Add author links
+[x]     blog page
+[x]     single post page
 
+
+"""
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape = True)
 
@@ -19,9 +37,9 @@ class BlogHandler(webapp2.RequestHandler):
             Get all posts by a specific user, ordered by creation date (descending).
             The user parameter will be a User object.
         """
-
-        # TODO - filter the query so that only posts by the given user
-        return None
+        user_posts = Post.all().order('-created')
+        user_posts.filter('author =', user)
+        return user_posts.fetch(limit=limit, offset=offset)
 
     def get_user_by_name(self, username):
         """ Get a user object from the db, based on their username """
@@ -260,10 +278,10 @@ class LoginHandler(BlogHandler):
 
     # TODO - The login code here is mostly set up for you, but there isn't a template to log in
 
-    def render_login_form(self, error=""):
+    def render_login_form(self, errors={}):
         """ Render the login form with or without an error, based on parameters """
         t = jinja_env.get_template("login.html")
-        response = t.render(error=error)
+        response = t.render(errors=errors)
         self.response.out.write(response)
 
     def get(self):
@@ -273,16 +291,19 @@ class LoginHandler(BlogHandler):
         submitted_username = self.request.get("username")
         submitted_password = self.request.get("password")
 
+        errors = {}
         # get the user from the database
         user = self.get_user_by_name(submitted_username)
 
         if not user:
-            self.render_login_form(error="Invalid username")
+            errors['username_error']="Invalid username"
+            self.render_login_form(errors=errors)
         elif hashutils.valid_pw(submitted_username, submitted_password, user.pw_hash):
             self.login_user(user)
             self.redirect('/blog/newpost')
         else:
-            self.render_login_form(error="Invalid password")
+            errors['password_error']="Invalid password"
+            self.render_login_form(errors=errors)
 
 class LogoutHandler(BlogHandler):
 
