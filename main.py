@@ -2,25 +2,7 @@ import webapp2, jinja2, os, re
 from google.appengine.ext import db
 from models import Post, User
 import hashutils
-"""
------TO DO-----
-[ ] Add Login Form
-[x]     Create template
-[x]     Link to register
-[ ]     Include errors
-[x]     Add login/logout links
-[x] Author field
-[x]     use db.ReferenceProperty
-[x]     delete posts with no author
-[x] Make get_posts_by_user
-[x]     get_posts(self, limit, offset) - All users
-[x]     ordered by time created desc
-[x] Add author links
-[x]     blog page
-[x]     single post page
 
-
-"""
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape = True)
 
