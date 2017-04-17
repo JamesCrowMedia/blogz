@@ -298,7 +298,7 @@ app = webapp2.WSGIApplication([
     ('/blog', BlogIndexHandler),
     ('/blog/newpost', NewPostHandler),
     webapp2.Route('/blog/<id:\d+>', ViewPostHandler),
-    webapp2.Route('/blog/<username:[a-zA-Z0-9_-]{3,20}>', BlogIndexHandler),
+    webapp2.Route('/blog/u/<username:[a-zA-Z0-9_-]{3,20}>', BlogIndexHandler),
     ('/signup', SignupHandler),
     ('/login', LoginHandler),
     ('/logout', LogoutHandler)
